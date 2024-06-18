@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssl-methods"
+version = "0.0.1"
+description = "Repository for self-supervised learning methods"
+
+dependencies = [
+    "pytorch_lightning==2.2.5",
+    "torch==2.3.1",
+    "torchvision==0.18.1"
+]
+
+
+[tool.setuptools]
+packages = ["ssl_methods"]
