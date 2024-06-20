@@ -4,7 +4,7 @@ import torch.optim as optim
 import pytorch_lightning as pl
 
 
-class PretrainingModule(pl.LightningModule):
+class BasePretrainingModule(pl.LightningModule):
     def __init__(self, model, learning_rate):
         super().__init__()
         self.model = model
