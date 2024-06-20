@@ -9,7 +9,7 @@ class ResNet18Decoder(nn.Module):
         self.conv1 = nn.ConvTranspose2d(64, 3, kernel_size=7, stride=2, padding=3, bias=False)
 
         self.bn1 = nn.BatchNorm2d(64)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU()
         self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
 
         self.layer4 = self._make_layer(512, 2, stride=2)

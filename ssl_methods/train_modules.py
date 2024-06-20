@@ -4,18 +4,19 @@ import torch.optim as optim
 import pytorch_lightning as pl
 
 
-class PretrainingModule(pl.LightningModule):
-    def __init__(self, model, learning_rate):
+class BasePretrainingModule(pl.LightningModule):
+    def __init__(self, model, learning_rate=1e-3):
         super().__init__()
         self.model = model
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = nn.MSELoss()
         self.learning_rate = learning_rate
 
-    def forward(self, text):
-        return self.model(text)
+    def forward(self, img):
+        return self.model(img)
 
     def training_step(self, batch, batch_idx):
         img, label = batch
+        
         output = self(img)
         loss = self.loss_fn(output, img)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
@@ -23,6 +24,7 @@ class PretrainingModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         img, label = batch
+
         output = self(img)
         loss = self.loss_fn(output, img)
         self.log('val_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -30,25 +32,26 @@ class PretrainingModule(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         img, label = batch
+
         output = self(img)
         loss = self.loss_fn(output, img)
         self.log('test_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
+        optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         return optimizer
 
 
 class TrainingModule(pl.LightningModule):
-    def __init__(self, model, learning_rate):
+    def __init__(self, model, learning_rate=1e-3):
         super().__init__()
         self.model = model
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = nn.MSELoss()
         self.learning_rate = learning_rate
 
-    def forward(self, text):
-        return self.model(text)
+    def forward(self, img):
+        return self.model(img)
 
     def training_step(self, batch, batch_idx):
         img, label = batch
