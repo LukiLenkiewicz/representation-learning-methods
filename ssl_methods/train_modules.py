@@ -5,10 +5,10 @@ import pytorch_lightning as pl
 
 
 class BasePretrainingModule(pl.LightningModule):
-    def __init__(self, model, learning_rate):
+    def __init__(self, model, learning_rate=1e-3):
         super().__init__()
         self.model = model
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = nn.MSELoss()
         self.learning_rate = learning_rate
 
     def forward(self, text):

@@ -7,7 +7,7 @@ class ResNet18Encoder(nn.Module):
         self.in_channels = 64
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(64)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU()
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.layer1 = self._make_layer(64, 2, stride=1)
@@ -16,7 +16,7 @@ class ResNet18Encoder(nn.Module):
         self.layer4 = self._make_layer(512, 2, stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * BasicEncoderBlock.expansion, 1000)
+        self.linear = nn.Linear(4608, 64)
 
     def _make_layer(self, out_channels, blocks, stride):
         downsample = None
@@ -48,6 +48,7 @@ class ResNet18Encoder(nn.Module):
 
         n, _, _, _, = x.shape
         z = x.reshape(n, -1)
+        z = self.linear(z)
         return z
 
 

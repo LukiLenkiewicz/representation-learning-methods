@@ -9,13 +9,16 @@ class ResNet18Decoder(nn.Module):
         self.conv1 = nn.ConvTranspose2d(64, 3, kernel_size=7, stride=2, padding=3, bias=False)
 
         self.bn1 = nn.BatchNorm2d(64)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU()
         self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
 
         self.layer4 = self._make_layer(512, 2, stride=2)
         self.layer3 = self._make_layer(256, 2, stride=2)
         self.layer2 = self._make_layer(128, 2, stride=2)
         self.layer1 = self._make_layer(64, 2, stride=1)
+
+        self.linear = nn.Linear(64, 4608)
+
 
     def _make_layer(self, out_channels, blocks, stride):
         upsample = None
@@ -34,6 +37,8 @@ class ResNet18Decoder(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, z):
+        z = self.linear(z)
+
         x = z.reshape(-1, 512, 3, 3)
 
         x = self.layer4(x)
@@ -50,7 +55,6 @@ class ResNet18Decoder(nn.Module):
 
         x = self.conv1(x)
         x = F.interpolate(x, size=(96, 96))
-
         return x
 
 

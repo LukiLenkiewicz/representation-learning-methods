@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 
@@ -68,7 +67,7 @@ class Permutation(nn.Module):
         return out
 
 
-class Flow(nn.Module):
+class FlowNet(nn.Module):
     def __init__(self, nz, hidden_size, nblocks=4):
         super().__init__()
         self.nblocks = nblocks
@@ -103,7 +102,7 @@ def test_flow():
     hidden_size = 64
     nblocks = 4
 
-    netF = Flow(nz, hidden_size, nblocks)
+    netF = FlowNet(nz, hidden_size, nblocks)
 
     with torch.no_grad():
         test_input = torch.randn((2, nz))
