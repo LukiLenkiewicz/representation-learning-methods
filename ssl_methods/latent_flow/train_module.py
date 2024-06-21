@@ -35,9 +35,9 @@ class LatentFlowPretrainingModule(pl.LightningModule):
         flow_loss = self.flow_loss_fn(noise_out, logdets)
 
         loss = ae_loss + flow_loss
+        self.log('train_ae_loss', ae_loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log('train_flow_loss', flow_loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log('train_flow_loss', flow_loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-        self.log('train_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):

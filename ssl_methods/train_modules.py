@@ -25,7 +25,7 @@ class BasePretrainingModule(pl.LightningModule):
         img, label = batch
         output = self(img)
         loss = self.loss_fn(output, img)
-        self.log('val_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def test_step(self, batch, batch_idx):
