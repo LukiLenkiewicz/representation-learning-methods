@@ -1,11 +1,12 @@
 from torchvision.datasets import STL10
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
+from torchmetrics import Accuracy
 
 import pytorch_lightning as pl
 
 
-class FinetuningDataModule(pl.LightningDataModule):
+class LinearEvaluationDataModule(pl.LightningDataModule):
     def __init__(self, path, preprocess, batch_size=32):
         super().__init__()
         self.path = path
