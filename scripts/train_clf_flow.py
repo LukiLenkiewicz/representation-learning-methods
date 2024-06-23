@@ -13,7 +13,6 @@ from ssl_methods.latent_flow.train_module import LatentFlowPretrainingModule
 parser = argparse.ArgumentParser(description="Process the paths for an encoder and classifier.")
 parser.add_argument('--encoder_path', type=str, help='Path to the encoder file')
 parser.add_argument('--classifier_path', type=str, help='Path to the classifier file')
-parser.add_argument('--freeze', action="store_true", help='freeze encoder or not')
 args = parser.parse_args()
 
 
@@ -27,8 +26,7 @@ def main():
     flow_module = LatentFlowPretrainingModule.load_from_checkpoint(f"./models/{args.encoder_path}")
     encoder = flow_module.encoder
 
-    if args.freeze:
-        encoder = freeze_encoder(encoder)
+    encoder = freeze_encoder(encoder)
     
     classifier = nn.Linear(64, 10)
     model = nn.Sequential(encoder, classifier)

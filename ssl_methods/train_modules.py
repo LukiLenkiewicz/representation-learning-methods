@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.optim as optim
-from torchmetrics import Accuracy
+from torchmetrics import Accuracy, F1Score
 
 import pytorch_lightning as pl
 
@@ -55,6 +55,7 @@ class TrainingModule(pl.LightningModule):
         self.loss_fn = nn.CrossEntropyLoss()
         self.learning_rate = learning_rate
         self.accuracy = Accuracy(task="multiclass", num_classes=10)
+        self.f1 = F1Score(task="multiclass", num_classes=10, average="macro")
 
     def forward(self, img):
         return self.model(img)
@@ -85,6 +86,8 @@ class TrainingModule(pl.LightningModule):
         self.log('test_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         acc = self.accuracy(output, label)
         self.log('test_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        f1 = self.f1(output, label)
+        self.log('test_f1', f1, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def configure_optimizers(self):

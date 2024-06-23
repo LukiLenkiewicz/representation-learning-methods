@@ -20,7 +20,6 @@ class LatentFlowPretrainingModule(pl.LightningModule):
         self.encoder = ResNet18Encoder()
         self.decoder = ResNet18Decoder()
         self.flow = FlowNet(nz=64, hidden_size=512, nblocks=8)
-        # self.flow = FlowNet(nz=64, hidden_size=256, nblocks=4)
 
     def forward(self, img):
         z = self.encoder(img)

@@ -32,8 +32,7 @@ def main():
     else:
         encoder = ResNet18Encoder()
 
-    if args.freeze:
-        encoder = freeze_encoder(encoder)
+    encoder = freeze_encoder(encoder)
 
     classifier = nn.Linear(64, 10)
 
