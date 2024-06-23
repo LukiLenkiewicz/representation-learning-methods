@@ -1,12 +1,18 @@
 # representation-learning-methods
 Repository containing representation learning methods. 
 
-# Running experiments
+# Environment preparation
 ## Download and prepare datasets:
 ```
 cd data
 bash download_and_prep_data.sh
 ```
+## Install required packages:
+```
+pip install .
+```
+
+# Experiments
 ## Latent Flow
 Pretrain model:
 
@@ -49,6 +55,8 @@ Train BVAE:
 python scripts/b_vae_train.py
 ```
 
+Test BVAE:
+
 ```
-python scripts/test_b_vae.py
+python scripts/test_b_vae.py --model /path/to/model
 ```

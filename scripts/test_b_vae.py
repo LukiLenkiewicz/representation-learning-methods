@@ -1,7 +1,5 @@
-# %% [markdown]
-# ## NIEZBEDNE DO PONIZSZYCH
+import argparse
 
-# %%
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -19,8 +17,13 @@ from ssl_methods.beta_vae.b_vae import BetaVae
 
 Tensor = TypeVar("torch.tensor")
 
+parser = argparse.ArgumentParser(
+    description="Process the paths for an encoder and classifier."
+)
+parser.add_argument("--model", type=str, help="Path to the model", default="beta_vae_beta_4.pth")
+args = parser.parse_args()
 
-# %%
+
 class ClassificationModel(nn.Module):
     def __init__(self, encoder, num_classes=10):
         super(ClassificationModel, self).__init__()
@@ -64,7 +67,7 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 # Example of loading a saved model
 beta = 4
 latent_dim = 64
-model_filename = "beta_vae_beta_4.pth"
+model_filename = args.path
 
 # Initialize the device
 if not torch.backends.mps.is_available():
@@ -166,7 +169,6 @@ for epoch in range(num_epochs):
     )
 
 
-# %%
 plt.figure(figsize=(10, 5))
 plt.plot(train_losses, label="Train Loss")
 plt.plot(val_losses, label="Validation Loss")
@@ -180,7 +182,6 @@ plt.show()
 # Save the fine-tuned classification model
 torch.save(classification_model.state_dict(), "classification_model.pth")
 
-# %%
 from sklearn.metrics import f1_score
 
 classification_model.eval()
@@ -241,10 +242,7 @@ for i in range(10):
     if incorrectly_classified[i]:
         show_images(incorrectly_classified[i][:5], f"Incorrectly Classified Class {i}")
 
-# %% [markdown]
-# ## Credible interval
 
-# %%
 import torch
 import matplotlib.pyplot as plt
 
