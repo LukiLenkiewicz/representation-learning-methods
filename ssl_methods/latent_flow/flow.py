@@ -23,7 +23,7 @@ class AffineCoupling(nn.Module):
             nn.Linear(hidden_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, in_ch),
-            Scale(in_ch)
+            Scale(in_ch),
         )
 
     def forward(self, x):
@@ -74,7 +74,9 @@ class FlowNet(nn.Module):
 
         assert nz % 4 == 0
 
-        self.affine_layers = nn.ModuleList([AffineCoupling(nz, hidden_size) for _ in range(nblocks)])
+        self.affine_layers = nn.ModuleList(
+            [AffineCoupling(nz, hidden_size) for _ in range(nblocks)]
+        )
         self.perms = nn.ModuleList([Permutation(nz) for _ in range(nblocks - 1)])
 
     def forward(self, x):
@@ -108,5 +110,5 @@ def test_flow():
         test_input = torch.randn((2, nz))
         test_output, test_logdet = netF(test_input)
         test_input2 = netF.reverse(test_output)
-        assert torch.allclose(test_input, test_input2), 'Flow model is incorrect'
+        assert torch.allclose(test_input, test_input2), "Flow model is incorrect"
         del test_input, test_output, test_input2, test_logdet

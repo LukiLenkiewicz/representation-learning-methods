@@ -7,7 +7,9 @@ class ResNet18Decoder(nn.Module):
     def __init__(self):
         super().__init__()
         self.in_channels = 512
-        self.conv1 = nn.ConvTranspose2d(64, 3, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.ConvTranspose2d(
+            64, 3, kernel_size=7, stride=2, padding=3, bias=False
+        )
 
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU()
@@ -20,17 +22,27 @@ class ResNet18Decoder(nn.Module):
 
         self.linear = nn.Linear(64, 4608)
 
-
     def _make_layer(self, out_channels, blocks, stride):
         upsample = None
-        if stride != 1 or self.in_channels != out_channels * BasicDecoderBlock.expansion:
+        if (
+            stride != 1
+            or self.in_channels != out_channels * BasicDecoderBlock.expansion
+        ):
             upsample = nn.Sequential(
-                nn.ConvTranspose2d(self.in_channels, out_channels * BasicDecoderBlock.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.ConvTranspose2d(
+                    self.in_channels,
+                    out_channels * BasicDecoderBlock.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
+                ),
                 nn.BatchNorm2d(out_channels * BasicDecoderBlock.expansion),
             )
 
         layers = []
-        layers.append(BasicDecoderBlock(self.in_channels, out_channels, stride, upsample))
+        layers.append(
+            BasicDecoderBlock(self.in_channels, out_channels, stride, upsample)
+        )
         self.in_channels = out_channels * BasicDecoderBlock.expansion
         for _ in range(1, blocks):
             layers.append(BasicDecoderBlock(self.in_channels, out_channels))
@@ -65,10 +77,19 @@ class BasicDecoderBlock(nn.Module):
 
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super().__init__()
-        self.conv1 = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.ConvTranspose2d(
+            in_channels,
+            out_channels,
+            kernel_size=3,
+            stride=stride,
+            padding=1,
+            bias=False,
+        )
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = nn.ConvTranspose2d(out_channels, out_channels, kernel_size=3, padding=1, bias=False)
+        self.conv2 = nn.ConvTranspose2d(
+            out_channels, out_channels, kernel_size=3, padding=1, bias=False
+        )
         self.bn2 = nn.BatchNorm2d(out_channels)
         self.downsample = downsample
 

@@ -21,24 +21,30 @@ class BasePretrainingModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         img, label = batch
-        
+
         output = self(img)
         loss = self.loss_fn(output, img)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def validation_step(self, batch, batch_idx):
         img, label = batch
         output = self(img)
         loss = self.loss_fn(output, img)
-        self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def test_step(self, batch, batch_idx):
         img, label = batch
         output = self(img)
         loss = self.loss_fn(output, img)
-        self.log('test_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "test_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def configure_optimizers(self):
@@ -54,37 +60,52 @@ class TrainingModule(pl.LightningModule):
         self.learning_rate = learning_rate
         self.accuracy = Accuracy(task="multiclass", num_classes=10)
         self.f1 = F1Score(task="multiclass", num_classes=10, average="macro")
+
     def forward(self, img):
         return self.model(img)
 
     def training_step(self, batch, batch_idx):
         img, label = batch
         output = self(img)
-        
+
         loss = self.loss_fn(output, label)
-        self.log('train_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True
+        )
         acc = self.accuracy(output, label)
-        self.log('train_acc', acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "train_acc", acc, on_step=True, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def validation_step(self, batch, batch_idx):
         img, label = batch
         output = self(img)
         loss = self.loss_fn(output, label)
-        self.log('val_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         acc = self.accuracy(output, label)
-        self.log('val_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "val_acc", acc, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def test_step(self, batch, batch_idx):
         img, label = batch
         output = self(img)
         loss = self.loss_fn(output, label)
-        self.log('test_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "test_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         acc = self.accuracy(output, label)
-        self.log('test_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "test_acc", acc, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         f1 = self.f1(output, label)
-        self.log('test_f1', f1, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log(
+            "test_f1", f1, on_step=False, on_epoch=True, prog_bar=True, logger=True
+        )
         return loss
 
     def configure_optimizers(self):

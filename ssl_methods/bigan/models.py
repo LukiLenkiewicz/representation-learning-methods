@@ -5,6 +5,7 @@ import torch.optim as optim
 import pytorch_lightning as pl
 from torchvision import models
 
+
 class ResNetEncoder(nn.Module):
     def __init__(self):
         super(ResNetEncoder, self).__init__()
@@ -18,6 +19,7 @@ class ResNetEncoder(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
+
 
 class Generator(nn.Module):
     def __init__(self):
@@ -34,6 +36,7 @@ class Generator(nn.Module):
         z = F.relu(self.deconv2(z))
         z = torch.tanh(self.deconv3(z))
         return z
+
 
 class Discriminator(nn.Module):
     def __init__(self):

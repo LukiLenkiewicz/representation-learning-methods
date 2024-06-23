@@ -8,7 +8,7 @@ class ResNet18Encoder(nn.Module):
     def __init__(self, latent_dim):
         super(ResNet18Encoder, self).__init__()
         resnet = models.resnet18(pretrained=True)
-        modules = list(resnet.children())[:-1] 
+        modules = list(resnet.children())[:-1]
         self.resnet = nn.Sequential(*modules)
         self.fc_mu = nn.Linear(resnet.fc.in_features, latent_dim)
         self.fc_var = nn.Linear(resnet.fc.in_features, latent_dim)
@@ -20,26 +20,37 @@ class ResNet18Encoder(nn.Module):
         log_var = self.fc_var(x)
         return mu, log_var
 
+
 class ResNet18Decoder(nn.Module):
     def __init__(self, latent_dim):
         super(ResNet18Decoder, self).__init__()
         self.decoder_input = nn.Linear(latent_dim, 512 * 3 * 3)
 
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(512, 256, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(
+                512, 256, kernel_size=3, stride=2, padding=1, output_padding=1
+            ),
             nn.BatchNorm2d(256),
             nn.LeakyReLU(),
-            nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(
+                256, 128, kernel_size=3, stride=2, padding=1, output_padding=1
+            ),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(),
-            nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(
+                128, 64, kernel_size=3, stride=2, padding=1, output_padding=1
+            ),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(),
-            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(
+                64, 32, kernel_size=3, stride=2, padding=1, output_padding=1
+            ),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(),
-            nn.ConvTranspose2d(32, 3, kernel_size=3, stride=2, padding=1, output_padding=1),
-            nn.Sigmoid()
+            nn.ConvTranspose2d(
+                32, 3, kernel_size=3, stride=2, padding=1, output_padding=1
+            ),
+            nn.Sigmoid(),
         )
 
     def forward(self, x):

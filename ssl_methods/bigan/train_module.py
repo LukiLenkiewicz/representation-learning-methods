@@ -4,7 +4,10 @@ import numpy as np
 import pytorch_lightning as pl
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+)
 from ssl_methods.decoder import ResNet18Decoder
 from ssl_methods.encoder import ResNet18Encoder
 from bigan.loss import adversarial_loss
@@ -28,6 +31,7 @@ class Discriminator(nn.Module):
         d_in = torch.cat((z, img_flat), dim=1)
         validity = self.model(d_in)
         return validity
+
 
 class BiGAN(pl.LightningModule):
     def __init__(self, latent_dim=64, lr=0.001, b1=0.5, b2=0.999):
@@ -63,20 +67,23 @@ class BiGAN(pl.LightningModule):
         real_loss = adversarial_loss(validity_real, torch.ones_like(validity_real))
         fake_loss = adversarial_loss(validity_fake, torch.zeros_like(validity_fake))
         d_loss = (real_loss + fake_loss) / 2
-        
+
         opt_d.zero_grad()
         d_loss.backward(retain_graph=True)
-        
+
         opt_g.zero_grad()
         g_loss.backward()
-        
+
         opt_d.step()
         opt_g.step()
 
-        self.log('d_loss', d_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True)
-        self.log('g_loss', g_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True)
+        self.log(
+            "d_loss", d_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True
+        )
+        self.log(
+            "g_loss", g_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True
+        )
         return {"d_loss": d_loss, "g_loss": g_loss}
-    
 
     def configure_optimizers(self):
         lr = self.hparams.lr

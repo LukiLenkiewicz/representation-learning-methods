@@ -10,15 +10,14 @@ class STLDataModule(pl.LightningDataModule):
     def __init__(self, batch_size=16):
         super().__init__()
         self.batch_size = batch_size
-        self.transform = transforms.Compose([
-            transforms.Resize((32, 32)),
-            transforms.ToTensor()
-        ])
+        self.transform = transforms.Compose(
+            [transforms.Resize((32, 32)), transforms.ToTensor()]
+        )
         self.path = "../data/bigan"
 
     def setup(self, stage=None):
         dataset = STL10(self.path, split="train", transform=self.transform)
-        self.train_dataset, self.val_dataset = random_split(dataset, [.8, .2])
+        self.train_dataset, self.val_dataset = random_split(dataset, [0.8, 0.2])
         self.test_dataset = STL10(self.path, split="test", transform=self.transform)
 
     def train_dataloader(self):

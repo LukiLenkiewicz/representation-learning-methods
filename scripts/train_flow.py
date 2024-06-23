@@ -17,7 +17,9 @@ def main():
     data_module.setup()
     training_module = LatentFlowPretrainingModule()
 
-    checkpoint_callback = ModelCheckpoint(dirpath="./models/latent-flow-large", monitor="val_loss")
+    checkpoint_callback = ModelCheckpoint(
+        dirpath="./models/latent-flow-large", monitor="val_loss"
+    )
     trainer = pl.Trainer(max_epochs=50, callbacks=[checkpoint_callback])
     trainer.fit(training_module, data_module)
 
