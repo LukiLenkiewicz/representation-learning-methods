@@ -1,11 +1,11 @@
 import torch.nn as nn
 import torch.optim as optim
 from torchmetrics import Accuracy, F1Score
-
 import pytorch_lightning as pl
 
 from ssl_methods.encoder import ResNet18Encoder
 from ssl_methods.decoder import ResNet18Decoder
+
 
 class BasePretrainingModule(pl.LightningModule):
     def __init__(self, learning_rate=1e-3):
@@ -29,7 +29,6 @@ class BasePretrainingModule(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         img, label = batch
-
         output = self(img)
         loss = self.loss_fn(output, img)
         self.log('val_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
@@ -37,7 +36,6 @@ class BasePretrainingModule(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         img, label = batch
-
         output = self(img)
         loss = self.loss_fn(output, img)
         self.log('test_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -56,7 +54,6 @@ class TrainingModule(pl.LightningModule):
         self.learning_rate = learning_rate
         self.accuracy = Accuracy(task="multiclass", num_classes=10)
         self.f1 = F1Score(task="multiclass", num_classes=10, average="macro")
-
     def forward(self, img):
         return self.model(img)
 

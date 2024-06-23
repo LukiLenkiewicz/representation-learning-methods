@@ -36,7 +36,6 @@ class ResNet18Encoder(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
@@ -50,7 +49,6 @@ class ResNet18Encoder(nn.Module):
         z = x.reshape(n, -1)
         z = self.linear(z)
         return z
-
 
 class BasicEncoderBlock(nn.Module):
     expansion = 1

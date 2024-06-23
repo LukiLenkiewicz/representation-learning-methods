@@ -27,7 +27,7 @@ class LinearEvaluationDataModule(pl.LightningDataModule):
     def test_dataloader(self):
         return DataLoader(self.test_dataset, batch_size=self.batch_size)
 
-
+      
 class ReconstructionDataModule(pl.LightningDataModule):
     def __init__(self, path, preprocess, batch_size=32):
         super().__init__()
