@@ -24,16 +24,18 @@ def main():
         ]
     )
 
-    training_module = LatentFlowPretrainingModule.load_from_checkpoint(f"./models/{args.encoder_path}")
-    encoder = training_module.encoder
+    flow_module = LatentFlowPretrainingModule.load_from_checkpoint(f"./models/{args.encoder_path}")
+    encoder = flow_module.encoder
 
     if args.freeze:
         encoder = freeze_encoder(encoder)
-
+    
     classifier = nn.Linear(64, 10)
     model = nn.Sequential(encoder, classifier)
 
     data_module = LinearEvaluationDataModule("./data", preprocess)
+    data_module.setup()
+
     training_module = TrainingModule(model)
 
     checkpoint_callback = ModelCheckpoint(dirpath=f"./models/{args.classifier_path}", monitor="val_acc", mode="max")

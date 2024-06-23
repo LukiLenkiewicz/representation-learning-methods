@@ -4,11 +4,15 @@ from torchmetrics import Accuracy
 
 import pytorch_lightning as pl
 
+from ssl_methods.encoder import ResNet18Encoder
+from ssl_methods.decoder import ResNet18Decoder
 
 class BasePretrainingModule(pl.LightningModule):
-    def __init__(self, model, learning_rate=1e-3):
+    def __init__(self, learning_rate=1e-3):
         super().__init__()
-        self.model = model
+        self.encoder = ResNet18Encoder()
+        self.decoder = ResNet18Decoder()
+        self.model = nn.Sequential(self.encoder, self.decoder)
         self.loss_fn = nn.MSELoss()
         self.learning_rate = learning_rate
 
@@ -48,7 +52,7 @@ class TrainingModule(pl.LightningModule):
     def __init__(self, model, learning_rate=1e-3):
         super().__init__()
         self.model = model
-        self.loss_fn = nn.MSELoss()
+        self.loss_fn = nn.CrossEntropyLoss()
         self.learning_rate = learning_rate
         self.accuracy = Accuracy(task="multiclass", num_classes=10)
 

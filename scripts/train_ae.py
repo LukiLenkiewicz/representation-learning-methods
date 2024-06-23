@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from ssl_methods.data_modules import ReconstructionDataModule
-from ssl_methods.latent_flow.train_module import LatentFlowPretrainingModule
+from ssl_methods.train_modules import BasePretrainingModule
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     data_module = ReconstructionDataModule("./data", preprocess)
     data_module.setup()
 
-    training_module = LatentFlowPretrainingModule()
+    training_module = BasePretrainingModule()
 
     checkpoint_callback = ModelCheckpoint(dirpath="./models/ae", monitor="val_loss")
     trainer = pl.Trainer(max_epochs=50, callbacks=[checkpoint_callback])

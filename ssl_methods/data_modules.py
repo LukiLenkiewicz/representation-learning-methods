@@ -29,7 +29,7 @@ class LinearEvaluationDataModule(pl.LightningDataModule):
 
 
 class ReconstructionDataModule(pl.LightningDataModule):
-    def __init__(self, preprocess, path="./data", batch_size=32):
+    def __init__(self, path, preprocess, batch_size=32):
         super().__init__()
         self.path = path
         self.batch_size = batch_size
