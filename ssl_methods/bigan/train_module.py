@@ -30,7 +30,7 @@ class Discriminator(nn.Module):
         return validity
 
 class BiGAN(pl.LightningModule):
-    def __init__(self, latent_dim=64, lr=0.0005, b1=0.5, b2=0.999):
+    def __init__(self, latent_dim=64, lr=0.001, b1=0.5, b2=0.999):
         super(BiGAN, self).__init__()
         self.save_hyperparameters()
         self.automatic_optimization = False
@@ -45,6 +45,7 @@ class BiGAN(pl.LightningModule):
         return img
 
     def training_step(self, batch, batch_idx):
+        (opt_g, opt_d) = self.optimizers()
         imgs, _ = batch
 
         z = torch.randn(imgs.shape[0], self.latent_dim)
@@ -62,32 +63,20 @@ class BiGAN(pl.LightningModule):
         real_loss = adversarial_loss(validity_real, torch.ones_like(validity_real))
         fake_loss = adversarial_loss(validity_fake, torch.zeros_like(validity_fake))
         d_loss = (real_loss + fake_loss) / 2
+        
+        opt_d.zero_grad()
+        d_loss.backward(retain_graph=True)
+        
+        opt_g.zero_grad()
+        g_loss.backward()
+        
+        opt_d.step()
+        opt_g.step()
 
         self.log('d_loss', d_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True)
         self.log('g_loss', g_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True)
         return {"d_loss": d_loss, "g_loss": g_loss}
     
-    def validation_step(self, batch, batch_idx):
-        imgs, _ = batch
-
-        z = torch.randn(imgs.shape[0], self.latent_dim)
-        z = z.type_as(imgs)
-
-        gen_imgs = self.decoder(z)
-
-        encoded_imgs = self.encoder(imgs)
-        
-        validity_real = self.discriminator(encoded_imgs, imgs)
-        validity_fake = self.discriminator(z, gen_imgs)
-        
-        g_loss = adversarial_loss(validity_fake, torch.ones_like(validity_fake))
-        real_loss = adversarial_loss(validity_real, torch.ones_like(validity_real))
-        fake_loss = adversarial_loss(validity_fake, torch.zeros_like(validity_fake))
-        d_loss = (real_loss + fake_loss) / 2
-        
-        self.log('val_d_loss', d_loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
-        self.log('val_g_loss', g_loss, prog_bar=True, on_step=False, on_epoch=True, logger=True)
-        return {"d_loss": d_loss, "g_loss": g_loss}
 
     def configure_optimizers(self):
         lr = self.hparams.lr
