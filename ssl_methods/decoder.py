@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -55,6 +56,7 @@ class ResNet18Decoder(nn.Module):
 
         x = self.conv1(x)
         x = F.interpolate(x, size=(96, 96))
+        x = torch.sigmoid(x)
         return x
 
 
