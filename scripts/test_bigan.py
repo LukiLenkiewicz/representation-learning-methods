@@ -1,18 +1,14 @@
-import pytorch_lightning as pl
-import matplotlib.pyplot as plt
 import torch
-import seaborn as sns
+import pytorch_lightning as pl
 
-def plot_loss(checkpoint_path):
-    checkpoint = torch.load(checkpoint_path)
-    plt.figure(figsize=(15, 10))
-    sns.plot(checkpoint["train_d_loss"], label="train_d_loss", color="red")
-    sns.plot(checkpoint["train_g_loss"], label="train_g_loss", color="blue")
-    sns.plot(checkpoint["val_d_loss"], label="val_d_loss", color="green")
-    sns.plot(checkpoint["val_g_loss"], label="val_g_loss", color="yellow")
-    plt.legend()
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("BiGAN Loss")
-    plt.show()
-    
+from ssl_methods.bigan.eval_module import BiGANLinearEval
+from ssl_methods.bigan.data_module import STLDataModule
+
+torch.cuda.empty_cache()
+stl10_dm = STLDataModule(batch_size=16)
+stl10_dm.setup()
+
+trainer = pl.Trainer(max_epochs=25)
+
+model = BiGANLinearEval.load_from_checkpoint("../scripts/lightning_logs/checkpoints-pretrained-bigan-linear-eval-lr-x10/bigan-epoch=20-val_acc=0.33.ckpt")
+trainer.test(model, stl10_dm)
