@@ -19,7 +19,9 @@ class LatentFlowPretrainingModule(pl.LightningModule):
 
         self.encoder = ResNet18Encoder()
         self.decoder = ResNet18Decoder()
-        self.flow = FlowNet(nz=64, hidden_size=256)
+        self.flow = FlowNet(nz=64, hidden_size=512, nblocks=8)
+        # self.flow = FlowNet(nz=64, hidden_size=256, nblocks=4)
+        self.flow_loss_weight = 1
 
     def forward(self, img):
         z = self.encoder(img)
@@ -49,7 +51,7 @@ class LatentFlowPretrainingModule(pl.LightningModule):
         noise_out, logdets = self.flow(z)
         flow_loss = self.flow_loss_fn(noise_out, logdets)
 
-        loss = ae_loss + flow_loss
+        loss = ae_loss + self.flow_loss_weight*flow_loss
         self.log('val_ae_loss', ae_loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log('val_flow_loss', flow_loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log('val_loss', loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -73,7 +75,3 @@ class LatentFlowPretrainingModule(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
         return optimizer
-        encoder_optimizer = optim.Adam(self.encoder.parameters(), lr=self.learning_rate)
-        decoder_optimizer = optim.Adam(self.decoder.parameters(), lr=self.learning_rate)
-        flow_optimizer = optim.Adam(self.flow.parameters(), lr=self.learning_rate)
-        return encoder_optimizer, decoder_optimizer, flow_optimizer

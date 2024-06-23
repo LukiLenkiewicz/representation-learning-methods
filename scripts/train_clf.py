@@ -37,7 +37,7 @@ def main():
     training_module = TrainingModule(model)
 
     checkpoint_callback = ModelCheckpoint(dirpath=f"./models/{args.classifier_path}", monitor="val_acc", mode="max")
-    trainer = pl.Trainer(max_epochs=50, callbacks=[checkpoint_callback])
+    trainer = pl.Trainer(max_epochs=200, callbacks=[checkpoint_callback])
     trainer.fit(training_module, data_module)
     
 
