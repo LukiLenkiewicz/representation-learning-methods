@@ -6,7 +6,7 @@ from torchvision.datasets import STL10
 import pytorch_lightning as pl
 
 
-class FinetuningDataModule(pl.LightningDataModule):
+class LinearEvaluationDataModule(pl.LightningDataModule):
     def __init__(self, path, preprocess, batch_size=32):
         super().__init__()
         self.path = path

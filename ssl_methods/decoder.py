@@ -17,6 +17,9 @@ class ResNet18Decoder(nn.Module):
         self.layer2 = self._make_layer(128, 2, stride=2)
         self.layer1 = self._make_layer(64, 2, stride=1)
 
+        self.linear = nn.Linear(64, 4608)
+
+
     def _make_layer(self, out_channels, blocks, stride):
         upsample = None
         if stride != 1 or self.in_channels != out_channels * BasicDecoderBlock.expansion:
@@ -34,6 +37,8 @@ class ResNet18Decoder(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, z):
+        z = self.linear(z)
+
         x = z.reshape(-1, 512, 3, 3)
 
         x = self.layer4(x)
@@ -50,7 +55,6 @@ class ResNet18Decoder(nn.Module):
 
         x = self.conv1(x)
         x = F.interpolate(x, size=(96, 96))
-
         return x
 
 

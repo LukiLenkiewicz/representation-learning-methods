@@ -16,7 +16,7 @@ class ResNet18Encoder(nn.Module):
         self.layer4 = self._make_layer(512, 2, stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * BasicEncoderBlock.expansion, 1000)
+        self.linear = nn.Linear(4608, 64)
 
     def _make_layer(self, out_channels, blocks, stride):
         downsample = None
@@ -48,6 +48,7 @@ class ResNet18Encoder(nn.Module):
 
         n, _, _, _, = x.shape
         z = x.reshape(n, -1)
+        z = self.linear(z)
         return z
 
 
